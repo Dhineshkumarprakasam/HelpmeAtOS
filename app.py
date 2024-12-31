@@ -1,5 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, request
-from matplotlib import pyplot as plt
+import matplotlib
+matplotlib.use('Agg') 
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
