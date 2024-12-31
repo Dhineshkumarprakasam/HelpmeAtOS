@@ -1,0 +1,78 @@
+{% extends "navbar.html" %}
+
+{% block link %} 
+    <link rel="stylesheet" href="/static/common.css">
+{% endblock %}
+
+{% block body %}
+<center><p class="title">Memory Management</p></center>
+
+<div class="main_container">
+    <div class="container">
+        <center><h2>Input</h2></center>
+        
+        <form action="/memory_management" method="post">
+            <label class="input_label" for="algorithms">Algorithms</label>
+          <select name="algorithm" id="algorithms">
+            <option value="option-1" {% if algorithm == 'option-1' %}selected{% endif %}>First Fit</option>
+            <option value="option-2" {% if algorithm == 'option-2' %}selected{% endif %}>Best Fit</option>
+            <option value="option-3" {% if algorithm == 'option-3' %}selected{% endif %}>Worst Fit</option>
+          </select>
+
+          <label class="input_label" for="Partitions">Partitions</label>
+          <input value="{{partition}}" name="Partitions" placeholder="e.g. 573 123 471 843 254" type="text">
+
+          <label class="input_label" for="processes">Processes</label>
+          <input value="{{process}}" name="Processes" placeholder="e.g. 200 325 211 612 489" type="text">
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div class="container2">
+            <center>
+                <h2>Output</h2>
+            </center>
+            {% if data=="Invalid input" %}
+          <script>
+            function raiseError()
+            {
+                alert("Invalid Input. Try Again.");
+            }
+            raiseError();
+          </script>
+            {% elif data %}
+                <h6 class="algorithm-name">{{data['algorithm']}}</h6>
+                <table>
+                    <th>Partitions</th>
+                    <th>Processes</th>
+                    {% for i in range(data['length'])%}
+                    <tr>
+                        <td>{{data['step_partition'][i]}}</td>
+                        <td>{{data['processes'][i]}}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td colspan="2">Final : {{data['memory']}}</td>
+                    </tr>
+                </table>
+                
+                <ul>
+                    <h5>Processes not allocated : {{data['not_allocated']}}</h5>
+                    <h5>Total free space : {{data['total_free']}}</h5>
+                </ul>
+            {% endif %}
+      </div>
+</div>
+
+<script>
+    const productSelect = document.getElementById("algorithms");
+    const extraField = document.getElementsByClassName("extraField");
+    
+    for (const x of extraField)
+    {
+        x.style.display = "block";
+    }
+      
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "navbar.html" %} 
+
+{%block link %}
+    <link rel="stylesheet" href="/static/index.css">
+{% endblock %}
+
+{% block body %}
+<center>
+<div class="tracking-in" id="project-title-index">HelpMe<span id="symbol-index">@</span>OS</div>
+
+<div class="main_container">
+<div class="descript-box">
+    <p class="descript">Welcome to HelpMe@OS, a comprehensive platform designed to assist students, developers, and enthusiasts in mastering key operating system concepts. This web application provides detailed explanations and C code implementations for critical algorithms. Whether you're looking to grasp the theory or practice the algorithms hands-on, HelpMe@OS offers an easy to navigate and practical solution. By offering source code available on GitHub, we aim to enhance your learning experience and support your journey towards mastering OS fundamentals.</p>
+</div>
+
+
+<div class="carousel-container">
+    <div id="textCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+            <p><span class="topic-title">CPU Scheduling</span><br> Efficient CPU scheduling algorithms determine the execution order of processes in a multitasking environment. Techniques like First Come First Served (FCFS), Shortest Job Next (SJN), and Round Robin ensure fair and efficient utilization of CPU resources.</p>
+        </div>
+
+        <div class="carousel-item">
+            <p><span class="topic-title">Disk Scheduling </span><br> Disk scheduling algorithms, such as FCFS, SSTF, and SCAN, optimize the order of I/O requests to minimize seek time and improve disk performance. These techniques are crucial for faster data access in storage systems.</p>
+        </div>
+
+        <div class="carousel-item">
+            <p><span class="topic-title">Memory Management </span><br> Memory management ensures optimal allocation and utilization of memory resources in an operating system. Concepts like paging, segmentation, and dynamic memory allocation are fundamental to managing processes efficiently.</p>
+        </div>
+
+        <div class="carousel-item">
+            <p><span class="topic-title">Page Replacement</span><br> Page replacement algorithms, like First in First Out, Least Recently Used, and Optimal Replacement, handle situations where a page must be swapped out of memory. These strategies aim to reduce page faults and improve system performance.</p>
+        </div>
+
+        <div class="carousel-item">
+            <p><span class="topic-title">Source Code</span><br>Our website provides the C code for all the algorithms. These implementations are available in our GitHub repository, which you can freely access to explore, learn, and practice these fundamental operating system concepts.</p>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+</center>
+{% endblock %}

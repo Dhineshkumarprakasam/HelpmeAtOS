@@ -1,0 +1,45 @@
+#project-title
+{
+    font-family: "PT Sans", sans-serif;
+    font-weight:600;
+    font-size: 22px;
+    color:#e14177;
+    letter-spacing:1px;
+}
+
+.list-items
+{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#symbol
+{
+    font-family: "Passion One", sans-serif;
+    font-weight: 200;
+    font-style: italic;
+    font-size: 30px;
+    padding-right: 5px;
+    color: #55c360;
+}
+
+nav
+{
+    background-color:black;
+}
+
+.click-link:hover
+{
+    color: #55c360;
+}
+
+.click-link:target
+{
+    color: #55c360;
+}
+
+body
+{
+    background-color:white;
+    margin-top: 60px;
+}

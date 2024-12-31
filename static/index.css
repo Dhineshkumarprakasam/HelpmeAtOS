@@ -1,0 +1,355 @@
+@-webkit-keyframes tracking-in-contract {
+  0% {
+    letter-spacing: 1em;
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    letter-spacing: normal;
+    opacity: 1;
+  }
+}
+@keyframes tracking-in-contract {
+  0% {
+    letter-spacing: 1em;
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    letter-spacing: normal;
+    opacity: 1;
+  }
+}
+
+.tracking-in {
+	-webkit-animation: tracking-in-contract 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+	        animation: tracking-in-contract 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+}
+  
+
+#project-title-index
+{
+    font-family: "PT Sans", sans-serif;
+    font-weight: 700;
+    font-style: bold;
+    font-size: 50px;
+    color:#e14177;
+}
+
+#symbol-index
+{
+    font-family: "Passion One", sans-serif;
+    font-weight: 200;
+    font-style: italic;
+    font-size: 80px;
+    padding-right: 10px;
+    color:#55c360;
+}
+
+.carousel-container {
+    max-width: 900px; 
+    margin: 20px auto;
+  }
+  
+  .carousel-item p {
+    font-size: 20px;
+    font-weight: 600;
+    color: black; 
+    margin: 0;
+    padding-right: 100px;
+    padding-left:100px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color:white;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .carousel {
+    padding: 10px;
+    border: #55c360 solid 3px;
+    border-radius: 20px;
+  }
+  
+.topic-title
+{
+    color: white;
+    font-size:25px;
+    background-color:#e14177;
+    display: block;
+    padding-top: 2px;
+    padding-bottom:2px;
+}
+
+.descript
+{
+    font-size: 20px;
+    font-weight: 600;
+    color:black; 
+    padding: 20px;
+    text-align:justify;
+
+}
+.descript-box
+{
+    width: 1200px;
+    height:200px;
+}
+
+.main_container
+{
+  -webkit-animation: bounce-in-fwd 1.1s both;
+	        animation: bounce-in-fwd 1.1s both;
+}
+
+@-webkit-keyframes bounce-in-fwd {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+    opacity: 0;
+  }
+  38% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+    opacity: 1;
+  }
+  55% {
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  72% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  81% {
+    -webkit-transform: scale(0.84);
+            transform: scale(0.84);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  89% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  95% {
+    -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+}
+@keyframes bounce-in-fwd {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+    opacity: 0;
+  }
+  38% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+    opacity: 1;
+  }
+  55% {
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  72% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  81% {
+    -webkit-transform: scale(0.84);
+            transform: scale(0.84);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  89% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  95% {
+    -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+}
+
+@media (min-width: 550px) and (max-width: 1024px) {
+        .main_container
+        {
+              width:100%;
+        }
+        .descript-box
+        {
+              width: fit-content;
+              height: fit-content;
+        }
+        .descript
+        {
+                font-size: 16px;
+                font-weight: 200px;
+        }
+
+        .carousel-container {
+                width: 500px; 
+                margin: 20px auto;
+              }
+              
+              .carousel-item p {
+                font-size: 16px;
+                font-weight: 600;
+                color: black; 
+                margin: 0;
+                padding-right: 20px;
+                padding-left:20px;
+                padding-top: 10px;
+                padding-bottom: 20px;
+                background-color:white;
+                border-radius: 5px;
+                text-align: center;
+              }
+              
+              .carousel {
+                padding: 10px;
+                border: #55c360 solid 3px;
+                border-radius: 20px;
+              }
+              
+            .topic-title
+            {
+                color: white;
+                font-size:16px;
+                background-color:#e14177;
+                display: block;
+                padding-top: 2px;
+                padding-bottom:2px;
+            }
+        #project-title-index
+        {
+                font-family: "PT Sans", sans-serif;
+                font-weight: 700;
+                font-style: bold;
+                font-size: 40px;
+                color:#e14177;
+                margin-top: 80px;
+        }
+        #symbol-index
+        {
+                font-family: "Passion One", sans-serif;
+                font-weight: 200;
+                font-style: italic;
+                font-size: 60px;
+                padding-right: 5px;
+                color:#55c360;
+        }
+}
+        
+
+@media (max-width: 550px) {
+  
+        .main_container
+        {
+              width:100%;
+        }
+        .descript-box
+        {
+              width: fit-content;
+              height: fit-content;
+              
+        }
+        .descript
+        {
+                font-size: 12px;
+                font-weight: 200px;
+        }
+
+        .carousel-container {
+                width: 300px; 
+                margin: 20px auto;
+              }
+              
+              .carousel-item p {
+                font-size: 10px;
+                font-weight: 600;
+                color: black; 
+                margin: 0;
+                padding-right: 20px;
+                padding-left:20px;
+                padding-top: 10px;
+                padding-bottom: 20px;
+                background-color:white;
+                border-radius: 5px;
+                text-align: center;
+              }
+              
+              .carousel {
+                padding: 10px;
+                border: #55c360 solid 3px;
+                border-radius: 20px;
+              }
+              
+            .topic-title
+            {
+                color: white;
+                font-size:14px;
+                background-color:#e14177;
+                display: block;
+                padding-top: 2px;
+                padding-bottom:2px;
+            }
+        #project-title-index
+        {
+                font-family: "PT Sans", sans-serif;
+                font-weight: 700;
+                font-style: bold;
+                font-size: 25px;
+                color:#e14177;
+                margin-top: 80px;
+        }
+        #symbol-index
+        {
+                font-family: "Passion One", sans-serif;
+                font-weight: 200;
+                font-style: italic;
+                font-size: 40px;
+                padding-right: 2px;
+                color:#55c360;
+        }
+}

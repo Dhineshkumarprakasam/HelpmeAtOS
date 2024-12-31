@@ -1,0 +1,80 @@
+{% extends "navbar.html" %}
+
+{% block link %} 
+    <link rel="stylesheet" href="/static/common.css">
+{% endblock %}
+
+{% block body %}
+<center><p class="title">Page Replacement</p></center>
+
+<div class="main_container">
+    <div class="container">
+        <center><h2>Input</h2></center>
+        
+        <form action="/page_replacement" method="post">
+            <label class="input_label" for="algorithms">Algorithms</label>
+          <select name="algorithm" id="algorithms">
+            <option value="option-1" {% if algorithm == 'option-1' %}selected{% endif %}>First In First Out</option>
+            <option value="option-2" {% if algorithm == 'option-2' %}selected{% endif %}>Optimal</option>
+            <option value="option-3" {% if algorithm == 'option-3' %}selected{% endif %}>Least Recently Used</option>
+          </select>
+
+          <label class="input_label" for="reference string">Reference String</label>
+          <input value="{{reference}}" name="reference" placeholder="e.g. 7 6 5 4 2 1 2 3 5 6 4 2" type="text">
+
+          <label class="input_label" for="frame">Frame Size</label>
+          <input value="{{frame}}" name="frame" placeholder="e.g. 3" type="text">
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div class="container2">
+            <center>
+                <h2>Output</h2>
+            </center>
+            {% if data=="Invalid input" %}
+          <script>
+            function raiseError()
+            {
+                alert("Invalid Input. Try Again.");
+            }
+            raiseError();
+          </script>
+            {% elif data %}
+
+            <h6 class="algorithm-name">{{data['algorithm']}}</h6>
+            <table>
+                <th>Frames</th>
+                <th>Reference String</th>
+                <th>Page Fault</th>
+                {% for i in range(data['length'])%}
+                <tr>
+                    <td>{{data['frame_history'][i][1]}}</td>
+                    <td>{{data['reference'][i]}}</td>
+                    <td>{{data['frame_history'][i][0]}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+
+            <ul>
+                <h6>No of Hits : {{data['hits']}}</h6>
+                <h6>No of Misses : {{data['misses']}}</h6>
+                <h6>Hit Ratio : {{data['hit_ratio']}}</h6>
+                <h6>Miss Ratio : {{data['miss_ratio']}}</h6>
+            </ul>
+            {% endif %}
+      </div>
+</div>
+
+<script>
+    const productSelect = document.getElementById("algorithms");
+    const extraField = document.getElementsByClassName("extraField");
+    
+    for (const x of extraField)
+    {
+        x.style.display = "block";
+    }
+      
+</script>
+{% endblock %}

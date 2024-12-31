@@ -1,0 +1,133 @@
+{% extends "navbar.html" %}
+
+{% block link %} 
+    <link rel="stylesheet" href="/static/common.css">
+{% endblock %}
+
+{% block body %}
+<center><p class="title">CPU Scheduling</p></center>
+
+<div class="main_container">
+    <div id="container" class="container">
+        <center><h2>Input</h2></center>
+        
+        <form action="/cpu_scheduling" method="post">
+            <label class="input_label" for="algorithms">Algorithms</label>
+          <select  name="algorithm" id="algorithms" onchange="checkArg()">
+            <option value="option-1" {% if algorithm == 'option-1' %}selected{% endif %}>First Come First Served</option>
+        <option value="option-2" {% if algorithm == 'option-2' %}selected{% endif %}>Shortest Job First</option>
+        <option value="option-3" {% if algorithm == 'option-3' %}selected{% endif %}>Shortest Remaining Time First</option>
+        <option value="option-4" {% if algorithm == 'option-4' %}selected{% endif %}>Round Robbin</option>
+        <option value="option-5" {% if algorithm == 'option-5' %}selected{% endif %}>Priority Preemptive</option>
+        <option value="option-6" {% if algorithm == 'option-6' %}selected{% endif %}>Priority Non-Preemptive</option>
+          </select>
+
+          <label class="input_label" for="Arrival Time">Arrival Time</label>
+          <input name="at" value="{{at}}" placeholder="e.g. 0 1 2 3 4" type="text">
+
+          <label class="input_label" for="Burst Time">Burst Time</label>
+          <input name="bt" value="{{bt}}" placeholder="e.g. 2 3 4 5 6" type="text">
+
+          <label class="extraField input_label" for="Priority">Priority</label>
+          <input name="priority" value="{{pt}}" class="extraField"  placeholder="Low Value High Priority" type="text">
+
+          <label class="extraField2 input_label" for="quantam">Quantam Time</label>
+          <input name="qt" value="{{qt}}" class="extraField2"  placeholder="e.g. 3" type="text">
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div class="container2">
+        <center>
+            <h2>Output</h2>
+        </center>
+        {% if data=="Invalid input" %}
+          <script>
+            function raiseError()
+            {
+                alert("Invalid Input. Try Again.");
+            }
+            raiseError();
+          </script>
+        {% elif data%}
+          <h6 class="algorithm-name">{{data['algorithm']}}</h6>
+          <table border="1" style="width:100%; text-align:center;">
+    <tr>
+        <th>Arrival Time</th>
+        <th>Burst Time</th>
+        <th>Completion Time</th>
+        <th>Turn Around Time</th>
+        <th>Waiting Time</th>
+    </tr>
+    {% for i in range(data['arrival time']|length) %}
+    <tr>
+        <td>{{ data['arrival time'][i] }}</td>
+        <td>{{ data['burst time'][i] }}</td>
+        <td>{{ data['ct'][i] }}</td>
+        <td>{{ data['tat'][i] }}</td>
+        <td>{{ data['wt'][i] }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="3">Total</td>
+        <td>{{ data['total tat'] }}</td>
+        <td>{{ data['total wt'] }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">Average</td>
+        <td>{{ data['avg tat'] }}</td>
+        <td>{{ data['avg wt'] }}</td>
+    </tr>
+</table>
+
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function checkArg()
+    {
+      const productSelect = document.getElementById("algorithms");
+      const extraField = document.getElementsByClassName("extraField");
+      const extraField2 = document.getElementsByClassName("extraField2");
+      const container = document.getElementById("container");
+
+      if (productSelect.value === "option-5" || productSelect.value === "option-6" ) 
+      {
+            for (const x of extraField)
+            {
+                x.style.display = "block";
+            }
+            for (const x2 of extraField2)
+            {
+                x2.style.display = "none";
+            }
+            container.style.height="530px";
+      } 
+
+      else if(productSelect.value == "option-4")
+      {
+        for (const x of extraField2)
+            {
+                x.style.display = "block";
+            }
+            container.style.height="530px";
+      }
+      else
+      {
+        for (const x of extraField)
+        {
+            x.style.display = "none";
+        }
+        for (const x2 of extraField2)
+        {
+            x2.style.display = "none";
+        }
+        container.style.height="430px";
+      }
+
+    }
+    checkArg();
+</script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "navbar.html" %}
+
+{% block link %} 
+    <link rel="stylesheet" href="/static/common.css">
+{% endblock %}
+
+{% block body %}
+<center><p class="title">Disk Scheduling</p></center>
+
+<div class="main_container">
+    <div class="container" id="container">
+        <center><h2>Input</h2></center>
+        
+        <form action="/disk_scheduling" method="post">
+            <label class="input_label" for="algorithms">Algorithms</label>
+
+          <select name="algorithm" id="algorithms" onchange="checkArg()">
+            <option value="option-1" {% if algorithm == 'option-1' %}selected{% endif %}>First Come First Served</option>
+        <option value="option-2" {% if algorithm == 'option-2' %}selected{% endif %}>Shortest Seek Time First</option>
+        <option value="option-3" {% if algorithm == 'option-3' %}selected{% endif %}>Scan</option>
+        <option value="option-4" {% if algorithm == 'option-4' %}selected{% endif %}>C-Scan</option>
+        <option value="option-5" {% if algorithm == 'option-5' %}selected{% endif %}>Lookup</option>
+        <option value="option-6" {% if algorithm == 'option-6' %}selected{% endif %}>C-Lookup</option>
+          </select>
+
+          <label class="input_label" for="reference string">Reference String</label>
+          <input value="{{reference}}" name="reference" placeholder="e.g. 62 53 49 22 11 25 30 115 94 29" type="text">
+
+          <label class="input_label" for="head">Head Position</label>
+          <input value="{{head}}" name="head" placeholder="e.g. 53" type="text">
+
+          <label class="input_label" for="disk_size">Disk size or End value</label>
+          <input value="{{disk_size}}" name="disk_size" placeholder="e.g. 200" type="text">
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div class="container2">
+            <center>
+                <h2>Output</h2>
+            </center>
+        {% if data %}
+        {% if data =="Invalid input" %}
+          <script>
+            function raiseError()
+            {
+                alert("Invalid Input. Try Again.");
+            }
+            raiseError();
+          </script>
+            {% else %}
+                <h6 class="algorithm-name">{{data['algorithm']}}</h5>
+                <h5 style="text-align: center;">Seek Time : {{data['total_seek']}}</h5>
+                <center>
+                <img src="/static/data/disk-plot.png" alt="error">
+                </center>
+            {% endif %}
+        {% endif %}
+      </div>
+</div>
+
+<script>
+    const container = document.getElementById("container");
+    container.style.height="530px";
+</script>
+{% endblock %}
