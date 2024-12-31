@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
 app = Flask(__name__)
 
