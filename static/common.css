@@ -278,6 +278,10 @@
         width: fit-content;
         margin-bottom: 30px;
 }
+	.container2
+      {
+        overflow-x: auto;
+      }
     
 .container input,
 .container select{
@@ -304,7 +308,10 @@
         flex-direction: column;
         align-items: center;
 }
-
+.container2
+      {
+        overflow-x: auto;
+      }
 .container
 {
         width: fit-content;
