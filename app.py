@@ -735,7 +735,7 @@ def visualize_disk_scheduling(algorithm_name, result, disk_size):
     arr=createYticks(len(seek_sequence))
     plt.yticks(range(0,len(seek_sequence)),arr)
     plt.legend()
-    plt.savefig("static/data/disk-plot.png")
+    plt.savefig("/tmp/disk-plot.png")
 
 
 
