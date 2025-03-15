@@ -14,5 +14,10 @@
             "src": "/(.*)",
             "dest": "app.py"
         }
-    ]
+    ],
+    "storage": {
+        "blob": {
+            "binding": "BLOB_STORAGE"
+        }
+    }
 }
