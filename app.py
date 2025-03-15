@@ -5,6 +5,13 @@ import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
+@app.route("/get-image")
+def get_image():
+    """Serve the saved image"""
+    TMP_PATH="/tmp/disk_scheduling.png"
+    if not os.path.exists(TMP_PATH):
+        generate_image()
+    return send_file(TMP_PATH, mimetype="image/png")
 
 #CPU Scheduling Algorithms
 def fcfs_scheduling(arrival_time, burst_time):
