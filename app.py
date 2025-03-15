@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
-@app.route("/get-image")
+@app.route("/get_image")
 def get_image():
     """Serve the saved image"""
     TMP_PATH="/tmp/disk-plot.png"
