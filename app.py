@@ -8,7 +8,7 @@ app = Flask(__name__)
 @app.route("/get-image")
 def get_image():
     """Serve the saved image"""
-    TMP_PATH="/tmp/disk_scheduling.png"
+    TMP_PATH="/tmp/disk-plot.png"
     if not os.path.exists(TMP_PATH):
         generate_image()
     return send_file(TMP_PATH, mimetype="image/png")
