@@ -740,7 +740,7 @@ def visualize_disk_scheduling(algorithm_name, result, disk_size):
     img_buffer = io.BytesIO()
     plt.savefig(img_buffer, format='png')
     img_buffer.seek(0)
-    response = vercel_blob.put("disk-plot.png", img_buffer.read(), {"addRandomSuffix": "false"})
+    response = vercel_blob.put("disk-plot.png", img_buffer.read(), {"addRandomSuffix": False})
     return response['url']
 
 
