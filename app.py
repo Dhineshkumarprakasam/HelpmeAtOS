@@ -737,11 +737,7 @@ def visualize_disk_scheduling(algorithm_name, result, disk_size):
     arr=createYticks(len(seek_sequence))
     plt.yticks(range(0,len(seek_sequence)),arr)
     plt.legend()
-    img_buffer = io.BytesIO()
-    plt.savefig(img_buffer, format='png')
-    img_buffer.seek(0)
-    response = vercel_blob.put("disk-plot.png", img_buffer.read(), {"addRandomSuffix": False})
-    return response['url']
+    plt.savefig("/static/data/disk-plot.png")
 
 
 
@@ -825,38 +821,32 @@ def getResultForDiskScheduling(algorithm,reference,head,disk_size):
 
         if algorithm=="option-1":
             result= fcfs_disk_scheduling(reference,head,disk_size)
-            url=visualize_disk_scheduling("First Come First Served",result,disk_size)
-            result["url"]=url
+            visualize_disk_scheduling("First Come First Served",result,disk_size)
             return result
         
         elif algorithm=="option-2":
             result= sstf_disk_scheduling(reference,head,disk_size)
-            url=visualize_disk_scheduling("Shortest Seek Time First",result,disk_size)
-            result["url"]=url
+            visualize_disk_scheduling("Shortest Seek Time First",result,disk_size)
             return result
         
         elif algorithm=="option-3":
             result= scan_disk_scheduling(reference,head,disk_size)
-            url=visualize_disk_scheduling("Scan",result,disk_size)
-            result["url"]=url
+            visualize_disk_scheduling("Scan",result,disk_size)
             return result
         
         elif algorithm=="option-4":
             result= c_scan_disk_scheduling(reference,head,disk_size)
-            url=visualize_disk_scheduling("C-Scan",result,disk_size)
-            result["url"]=url
+            visualize_disk_scheduling("C-Scan",result,disk_size)
             return result
         
         elif algorithm=="option-5":
             result= look_disk_scheduling(reference,head,disk_size)
-            url=visualize_disk_scheduling("Lookup",result,disk_size)
-            result["url"]=url
+            visualize_disk_scheduling("Lookup",result,disk_size)
             return result
         
         else:
             result= c_look_disk_scheduling(reference,head,disk_size)
-            url=visualize_disk_scheduling("C-Lookup",result,disk_size)
-            result["url"]=url
+            visualize_disk_scheduling("C-Lookup",result,disk_size)
             return result
         
     except:
