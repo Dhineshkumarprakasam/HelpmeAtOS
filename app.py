@@ -1,11 +1,182 @@
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, jsonify
 import matplotlib
-import io
-import vercel_blob
+import os
+import time
+from datetime import datetime, timedelta
+from functools import wraps
+from collections import defaultdict
+import json
+
+from dotenv import load_dotenv
+load_dotenv()
+
+# Gemini AI
+import google.generativeai as genai
+
+# Chroma DB for cloud retrieval
+import chromadb
+from chromadb.config import Settings
+
 matplotlib.use('Agg') 
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
+
+# Configure Gemini API
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    MODEL = genai.GenerativeModel('gemini-2.5-flash-lite')
+else:
+    MODEL = None
+    print("Warning: GEMINI_API_KEY not set in .env file")
+
+# Configure Chroma DB Cloud
+CHROMA_CLOUD_API_KEY = os.getenv('CHROMA_CLOUD_API_KEY')
+CHROMA_CLOUD_TENANT = os.getenv('CHROMA_CLOUD_TENANT')
+CHROMA_CLOUD_DATABASE = os.getenv('CHROMA_CLOUD_DATABASE', 'operating_system')
+CHROMA_COLLECTION_NAME = os.getenv('CHROMA_COLLECTION_NAME', 'os-knowledge-base')
+
+# Initialize Chroma DB Cloud client
+try:
+    chroma_client = chromadb.CloudClient(
+        api_key=CHROMA_CLOUD_API_KEY,
+        tenant=CHROMA_CLOUD_TENANT,
+        database=CHROMA_CLOUD_DATABASE
+    )
+    # Get or create collection
+    chroma_collection = chroma_client.get_or_create_collection(
+        name=CHROMA_COLLECTION_NAME,
+        metadata={"hnsw:space": "cosine"}
+    )
+    print(f"✓ Connected to Chroma DB Cloud")
+    print(f"  Tenant: {CHROMA_CLOUD_TENANT}")
+    print(f"  Database: {CHROMA_CLOUD_DATABASE}")
+    print(f"  Collection: {CHROMA_COLLECTION_NAME}")
+except Exception as e:
+    print(f"Warning: Could not connect to Chroma DB Cloud: {e}")
+    chroma_client = None
+    chroma_collection = None
+
+# Rate limiting configuration
+RATE_LIMIT_REQUESTS = int(os.getenv('RATE_LIMIT_REQUESTS', 10))
+RATE_LIMIT_WINDOW = int(os.getenv('RATE_LIMIT_WINDOW', 60))  # in seconds
+
+# Store request tracking by IP address
+request_tracker = defaultdict(list)
+
+
+def get_client_ip():
+    """Get client IP address from request"""
+    if request.headers.get('X-Forwarded-For'):
+        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
+    return request.remote_addr
+
+
+def check_rate_limit():
+    """Check if client has exceeded rate limit"""
+    ip = get_client_ip()
+    current_time = time.time()
+    window_start = current_time - RATE_LIMIT_WINDOW
+    
+    # Clean old requests outside the window
+    request_tracker[ip] = [
+        req_time for req_time in request_tracker[ip]
+        if req_time > window_start
+    ]
+    
+    # Check if limit exceeded
+    if len(request_tracker[ip]) >= RATE_LIMIT_REQUESTS:
+        return False, len(request_tracker[ip])
+    
+    return True, len(request_tracker[ip])
+
+
+def record_request():
+    """Record a request for the current IP"""
+    ip = get_client_ip()
+    request_tracker[ip].append(time.time())
+
+
+def get_reset_time():
+    """Get time until rate limit resets"""
+    ip = get_client_ip()
+    current_time = time.time()
+    
+    if not request_tracker[ip]:
+        return 0
+    
+    oldest_request = min(request_tracker[ip])
+    reset_time = oldest_request + RATE_LIMIT_WINDOW - current_time
+    
+    return max(0, reset_time)
+
+
+def query_chroma_db(query_text):
+    """Query Chroma DB Cloud for relevant OS concepts"""
+    try:
+        if not chroma_collection:
+            return "Chroma DB not connected. Please check your configuration."
+        
+        # Query the Chroma DB collection
+        # The query will retrieve the most relevant documents using semantic search
+        results = chroma_collection.query(
+            query_texts=[query_text],
+            n_results=3  # Get top 3 most relevant documents
+        )
+        
+        if results and results['documents'] and len(results['documents']) > 0:
+            # Format the retrieved documents
+            relevant_docs = results['documents'][0]
+            distances = results['distances'][0] if 'distances' in results else []
+            
+            formatted_results = []
+            for i, doc in enumerate(relevant_docs):
+                if doc:
+                    formatted_results.append(doc)
+            
+            return "\n".join(formatted_results) if formatted_results else "No relevant information found in knowledge base."
+        else:
+            return "No relevant information found in knowledge base."
+        
+    except Exception as e:
+        print(f"Error querying Chroma DB: {e}")
+        return "Error querying knowledge base. Please try again."
+
+
+def generate_response_with_gemini(user_message, context=""):
+    """Generate response using Gemini AI API"""
+    if not MODEL:
+        return "API configuration error: Gemini API key not found. Please configure it in .env file."
+    
+    try:
+        # Get relevant context from knowledge base
+        knowledge_context = query_chroma_db(user_message)
+        
+        # Construct prompt with context
+        system_prompt = """You are an expert Operating Systems tutor helping students understand OS concepts. 
+Focus on: CPU Scheduling, Memory Management, Page Replacement, and Disk Scheduling.
+Be concise, clear, and provide practical examples when relevant.
+If the question is not related to Operating Systems, politely redirect the conversation."""
+        
+        full_prompt = f"""{system_prompt}
+
+Knowledge Base Context:
+{knowledge_context}
+
+Student Question: {user_message}
+
+Please provide a helpful and educational response."""
+        
+        response = MODEL.generate_content(full_prompt)
+        return response.text
+        
+    except Exception as e:
+        print(f"Error with Gemini API: {e}")
+        return f"Error generating response: {str(e)}. Please check your API key configuration."
+
+
+
 
 
 #CPU Scheduling Algorithms
@@ -927,6 +1098,90 @@ def input_disk_scheduling():
 
         return render_template("disk_scheduling.html",data=data,algorithm=algorithm,reference=reference,head=head,disk_size=disk_size)
     return render_template("disk_scheduling.html")
+
+
+# Chatbot Routes
+@app.route("/chatbot")
+def chatbot():
+    """Render chatbot page"""
+    return render_template("chatbot.html")
+
+
+@app.route("/api/chat", methods=['POST'])
+def chat_api():
+    """API endpoint for chatbot"""
+    try:
+        # Check rate limit
+        allowed, count = check_rate_limit()
+        
+        if not allowed:
+            return jsonify({
+                "error": f"Rate limit exceeded. Maximum {RATE_LIMIT_REQUESTS} requests per minute."
+            }), 429
+        
+        # Get user message
+        data = request.get_json()
+        user_message = data.get('message', '').strip()
+        
+        if not user_message:
+            return jsonify({"error": "Message cannot be empty"}), 400
+        
+        if len(user_message) > 500:
+            return jsonify({"error": "Message too long (max 500 characters)"}), 400
+        
+        # Record this request
+        record_request()
+        
+        # Generate response using Gemini AI
+        response = generate_response_with_gemini(user_message)
+        
+        return jsonify({
+            "response": response,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        print(f"Error in chat API: {e}")
+        return jsonify({
+            "error": f"An error occurred: {str(e)}"
+        }), 500
+
+
+@app.route("/api/get-rate-limit", methods=['GET'])
+def get_rate_limit_status():
+    """Get current rate limit status for client"""
+    try:
+        ip = get_client_ip()
+        current_time = time.time()
+        window_start = current_time - RATE_LIMIT_WINDOW
+        
+        # Count requests in current window
+        valid_requests = [
+            req_time for req_time in request_tracker[ip]
+            if req_time > window_start
+        ]
+        
+        return jsonify({
+            "count": len(valid_requests),
+            "limit": RATE_LIMIT_REQUESTS,
+            "window": RATE_LIMIT_WINDOW
+        })
+        
+    except Exception as e:
+        print(f"Error getting rate limit: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/get-reset-time", methods=['GET'])
+def get_rate_limit_reset():
+    """Get time until rate limit resets"""
+    try:
+        reset_time = get_reset_time()
+        return jsonify({"reset_time": reset_time * 1000})  # Convert to milliseconds
+        
+    except Exception as e:
+        print(f"Error getting reset time: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__=="__main__":
