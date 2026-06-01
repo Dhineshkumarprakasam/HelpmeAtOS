@@ -180,28 +180,28 @@ def google_verification():
     return send_from_directory('static', 'google72cdd43eb7699231.html')
 
 @app.route('/sitemap.xml')
-    def sitemap():
-        # Add all your public URLs here
-        urls = [
-            "https://helpmeatos-production.up.railway.app/",
-            "https://helpmeatos-production.up.railway.app/index",
-            "https://helpmeatos-production.up.railway.app/cpu_scheduling",
-            "https://helpmeatos-production.up.railway.app/memory_management",
-            "https://helpmeatos-production.up.railway.app/page_replacement",
-            "https://helpmeatos-production.up.railway.app/disk_scheduling",
-            "https://helpmeatos-production.up.railway.app/chatbot"
-        ]
+def sitemap():
+    # Add all your public URLs here
+    urls = [
+        "https://helpmeatos-production.up.railway.app/",
+        "https://helpmeatos-production.up.railway.app/index",
+        "https://helpmeatos-production.up.railway.app/cpu_scheduling",
+        "https://helpmeatos-production.up.railway.app/memory_management",
+        "https://helpmeatos-production.up.railway.app/page_replacement",
+        "https://helpmeatos-production.up.railway.app/disk_scheduling",
+        "https://helpmeatos-production.up.railway.app/chatbot"
+    ]
         
-        # Build the XML
-        xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
-        xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        for url in urls:
-            xml += f'  <url>\n    <loc>{url}</loc>\n  </url>\n'
-        xml += '</urlset>'
-        
-        response = make_response(xml)
-        response.headers['Content-Type'] = 'application/xml'
-        return response
+    # Build the XML
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for url in urls:
+        xml += f'  <url>\n    <loc>{url}</loc>\n  </url>\n'
+    xml += '</urlset>'
+    
+    response = make_response(xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 #CPU Scheduling Algorithms
 def fcfs_scheduling(arrival_time, burst_time):
