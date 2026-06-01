@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from collections import defaultdict
 import json
-
+from flask import send_from_directory
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -175,9 +175,9 @@ Please provide a helpful and educational response."""
         print(f"Error with Gemini API: {e}")
         return f"Error generating response: {str(e)}. Please check your API key configuration."
 
-
-
-
+@app.route('/google72cdd43eb7699231.html')
+def google_verification():
+    return send_from_directory('static', 'google72cdd43eb7699231.html')
 
 #CPU Scheduling Algorithms
 def fcfs_scheduling(arrival_time, burst_time):
