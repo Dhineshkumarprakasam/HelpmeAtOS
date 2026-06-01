@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://helpmeatos-production.up.railway.app/sitemap.xml
