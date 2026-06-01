@@ -1,0 +1,217 @@
+{% extends "navbar.html" %}
+
+{% block link %}
+<link rel="stylesheet" href="/static/chatbot.css">
+{% endblock %}
+
+{% block body %}
+<div class="chatbot-container">
+  <div class="chatbot-header">
+    <a class="navbar-brand" href="#"> <div id="project-title">HelpMe<span id="symbol">@</span>OS<span id="normal-text"> AI Assistant</span></div> </a>
+  </div>
+  <div class="rate-limit-info">
+    <span id="request-count">0/10</span>
+    <span id="reset-timer">60s</span>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <div class="message bot-message">
+      <div class="message-content">
+        <p>Hello! I'm your AI Assistant for Operating System concepts. Ask me anything about Operating Systems. I'm here to help!</p>
+      </div>
+      <div class="message-time">Now</div>
+    </div>
+  </div>
+
+  <div class="chat-error" id="chatError" style="display: none;"></div>
+
+  <div class="chat-input-container">
+    <form id="chatForm" onsubmit="sendMessage(event)">
+      <div class="input-group">
+        <input 
+          type="text" 
+          id="userInput" 
+          placeholder="Ask your question..." 
+          autocomplete="off"
+          maxlength="500"
+        />
+        <button type="submit" id="sendBtn" class="send-btn">
+          <span id="btnText">Send</span>
+          <span id="btnLoader" class="spinner-loader" style="display: none;">
+            <i class="spinner"></i>
+          </span>
+        </button>
+      </div>
+      <div class="char-count">
+        <span id="charCount">0</span>/500
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let requestCount = 0;
+let requestTimestamp = null;
+const RATE_LIMIT = 10;
+const RATE_WINDOW = 60000; // 60 seconds
+
+// Initialize request count from server
+fetch('/api/get-rate-limit')
+  .then(res => res.json())
+  .then(data => {
+    requestCount = data.count;
+    updateRateLimit();
+  })
+  .catch(err => console.error('Error fetching rate limit:', err));
+
+function updateRateLimit() {
+  const remaining = Math.max(0, RATE_LIMIT - requestCount);
+  document.getElementById('request-count').textContent = `${requestCount}/10`;
+  
+  if (requestCount >= RATE_LIMIT) {
+    document.getElementById('sendBtn').disabled = true;
+    document.getElementById('sendBtn').style.opacity = '0.5';
+    showError('Rate limit exceeded! Maximum 10 requests per minute.');
+  } else {
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('sendBtn').style.opacity = '1';
+    clearError();
+  }
+}
+
+function updateResetTimer() {
+  fetch('/api/get-reset-time')
+    .then(res => res.json())
+    .then(data => {
+      const secondsLeft = Math.ceil(data.reset_time / 1000);
+      document.getElementById('reset-timer').textContent = `${secondsLeft}s`;
+      
+      if (secondsLeft <= 0) {
+        requestCount = 0;
+        updateRateLimit();
+      } else {
+        setTimeout(updateResetTimer, 1000);
+      }
+    });
+}
+
+function sendMessage(event) {
+  event.preventDefault();
+  
+  const input = document.getElementById('userInput').value.trim();
+  
+  if (!input) {
+    showError('Please enter a message.');
+    return;
+  }
+  
+  if (requestCount >= RATE_LIMIT) {
+    showError('Rate limit exceeded! Maximum 10 requests per minute.');
+    return;
+  }
+
+  // Add user message to chat
+  addMessage(input, 'user');
+  document.getElementById('userInput').value = '';
+  document.getElementById('charCount').textContent = '0';
+  
+  // Show loading state
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('btnText').style.display = 'none';
+  document.getElementById('btnLoader').style.display = 'inline-block';
+
+  // Send to server
+  fetch('/api/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message: input })
+  })
+  .then(res => {
+    if (res.status === 429) {
+      throw new Error('Rate limit exceeded');
+    }
+    return res.json();
+  })
+  .then(data => {
+    requestCount++;
+    updateRateLimit();
+    updateResetTimer();
+    
+    if (data.error) {
+      showError(data.error);
+      addMessage(`Error: ${data.error}`, 'error');
+    } else {
+      addMessage(data.response, 'bot');
+      clearError();
+    }
+  })
+  .catch(err => {
+    console.error('Error:', err);
+    const errorMsg = err.message === 'Rate limit exceeded' 
+      ? 'Rate limit exceeded! You can only send 10 messages per minute.'
+      : 'Error communicating with the server. Please try again.';
+    showError(errorMsg);
+    addMessage(errorMsg, 'error');
+  })
+  .finally(() => {
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('btnText').style.display = 'inline';
+    document.getElementById('btnLoader').style.display = 'none';
+  });
+}
+
+function addMessage(text, sender) {
+  const chatMessages = document.getElementById('chatMessages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${sender}-message`;
+  
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'message-content';
+  
+  // Simple markdown-like formatting
+  let formattedText = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+  
+  contentDiv.innerHTML = `<p>${formattedText}</p>`;
+  messageDiv.appendChild(contentDiv);
+  
+  const timeDiv = document.createElement('div');
+  timeDiv.className = 'message-time';
+  const now = new Date();
+  timeDiv.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  messageDiv.appendChild(timeDiv);
+  
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showError(message) {
+  const errorDiv = document.getElementById('chatError');
+  errorDiv.textContent = message;
+  errorDiv.style.display = 'block';
+}
+
+function clearError() {
+  document.getElementById('chatError').style.display = 'none';
+}
+
+// Character count
+document.getElementById('userInput').addEventListener('input', (e) => {
+  document.getElementById('charCount').textContent = e.target.value.length;
+});
+
+// Enter key to send
+document.getElementById('userInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage(e);
+  }
+});
+
+// Auto-start reset timer
+updateResetTimer();
+</script>
+{% endblock %}
