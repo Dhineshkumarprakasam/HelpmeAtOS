@@ -1,88 +1,82 @@
+/* ===== Base reset ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ===== Brand colors ===== */
+:root {
+  --brand-pink: #e14177;
+  --brand-pink-dark: #d63b6a;
+  --brand-green: #55c360;
+  --brand-green-dark: #4aad4f;
+  --bg-dark: #1a1a1a;
+  --bg-dark2: #2d2d2d;
+}
+
+/* ===== Typography ===== */
+#symbol {
+  font-family: "Passion One", sans-serif;
+  font-weight: 200;
+  font-style: italic;
+  font-size: 30px;
+  padding-right: 0;
+  color: var(--brand-green);
+}
+
+#project-title {
+  font-family: "PT Sans", sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--brand-pink);
+  letter-spacing: 1px;
+}
+
+#normal-text {
+  margin-left: 5px;
+  color: white;
+}
+
+/* ===== Container ===== */
+/*
+  FIX 1: Replaced fixed margin-left/right: 100px with responsive clamp.
+  On a 320px screen, 100px margins left only 120px — unusable.
+  Using fluid margins: 8px on tiny screens, up to 80px on wide screens.
+*/
 .chatbot-container {
-  margin-top: 100px;
-  margin-left:100px;
-  margin-right:100px;
-  margin-bottom:20px;
+  margin: 100px auto 20px;
+  width: calc(100% - 16px);
+  max-width: 1000px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   height: 80vh;
+  min-height: 500px;
   overflow: hidden;
   animation: bounce-in-fwd 0.8s ease-out;
   position: relative;
 }
 
-#symbol
-{
-    font-family: "Passion One", sans-serif;
-    font-weight: 200;
-    font-style: italic;
-    font-size: 30px;
-    padding-right: 0px;
-    color: #55c360;
-}
-
-#project-title
-{
-    font-family: "PT Sans", sans-serif;
-    font-weight:600;
-    font-size: 22px;
-    color:#e14177;
-    letter-spacing:1px;
-}
-
-#normal-text
-{
-    margin-left: 5px;
-    color:white;
-}
-
-
 @keyframes bounce-in-fwd {
-  0% {
-    animation-timing-function: ease-in;
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  38% {
-    animation-timing-function: ease-out;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  55% {
-    animation-timing-function: ease-in;
-    transform: translateY(10px);
-  }
-  72% {
-    animation-timing-function: ease-out;
-    transform: translateY(0);
-  }
-  81% {
-    animation-timing-function: ease-in;
-    transform: translateY(5px);
-  }
-  90% {
-    animation-timing-function: ease-out;
-    transform: translateY(0);
-  }
-  95% {
-    animation-timing-function: ease-in;
-    transform: translateY(2px);
-  }
-  100% {
-    animation-timing-function: ease-out;
-    transform: translateY(0);
-  }
+  0%   { opacity: 0; transform: translateY(40px); animation-timing-function: ease-in; }
+  38%  { opacity: 1; transform: translateY(0);    animation-timing-function: ease-out; }
+  55%  { transform: translateY(10px);             animation-timing-function: ease-in; }
+  72%  { transform: translateY(0);                animation-timing-function: ease-out; }
+  81%  { transform: translateY(5px);              animation-timing-function: ease-in; }
+  90%  { transform: translateY(0);                animation-timing-function: ease-out; }
+  95%  { transform: translateY(2px);              animation-timing-function: ease-in; }
+  100% { transform: translateY(0);                animation-timing-function: ease-out; }
 }
 
+/* ===== Header ===== */
 .chatbot-header {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-dark2) 100%);
   color: #ffffff;
-  padding: 10px;
-  border-bottom: 3px solid #e14177;
+  padding: 12px 16px;
+  border-bottom: 3px solid var(--brand-pink);
   text-align: center;
+  flex-shrink: 0;
 }
 
 .chatbot-header h1 {
@@ -98,7 +92,7 @@
   font-weight: 200;
   font-style: italic;
   font-size: 36px;
-  color: #55c360;
+  color: var(--brand-green);
   padding: 0 5px;
 }
 
@@ -109,24 +103,41 @@
   font-weight: 300;
 }
 
+/* ===== Rate limit badge ===== */
+/*
+  FIX 2: Removed position: absolute — it was anchored to viewport top at 85px,
+  which overlapped the header on mobile and broke at varying navbar heights.
+  Now it lives inside the header flow, aligned right using flexbox.
+  The header becomes a flex row on all screens.
+*/
+.chatbot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chatbot-header .navbar-brand {
+  flex: 1;
+  min-width: 0;
+}
+
 .rate-limit-info {
-  position: absolute;
-  top: 85px;
-  right: 20px;
   display: flex;
   gap: 10px;
   font-size: 11px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
   padding: 6px 12px;
   border-radius: 20px;
-  border: 1px solid #e14177;
-  z-index: 100;
+  border: 1px solid var(--brand-pink);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .rate-limit-info span {
   background: none;
   padding: 0;
-  border-radius: 0;
   font-weight: 600;
   color: #fff;
 }
@@ -141,41 +152,35 @@
   vertical-align: middle;
 }
 
-#request-count::before {
-  background-color: #e14177;
-}
+#request-count::before { background-color: var(--brand-pink); }
+#reset-timer::before   { background-color: var(--brand-green); }
 
-#reset-timer::before {
-  background-color: #55c360;
-}
-
+/* ===== Messages area ===== */
+/*
+  FIX 3: Removed max-height: 60vh from the media query — it conflicted
+  with the container's flex layout and caused double-clamping.
+  flex: 1 + overflow-y: auto is the correct approach.
+*/
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 15px;
   background-color: #fafafa;
+  min-height: 0; /* required for flex children to scroll properly */
 }
 
-.chat-messages::-webkit-scrollbar {
-  width: 8px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
+.chat-messages::-webkit-scrollbar       { width: 8px; }
+.chat-messages::-webkit-scrollbar-track { background: #f1f1f1; }
 .chat-messages::-webkit-scrollbar-thumb {
-  background: #e14177;
+  background: var(--brand-pink);
   border-radius: 4px;
 }
+.chat-messages::-webkit-scrollbar-thumb:hover { background: var(--brand-green); }
 
-.chat-messages::-webkit-scrollbar-thumb:hover {
-  background: #55c360;
-}
-
+/* ===== Messages ===== */
 .message {
   display: flex;
   flex-direction: column;
@@ -183,36 +188,27 @@
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.user-message {
-  align-items: flex-end;
-}
+.user-message { align-items: flex-end; }
 
 .user-message .message-content {
-  background: linear-gradient(135deg, #e14177 0%, #d63b6a 100%);
+  background: linear-gradient(135deg, var(--brand-pink) 0%, var(--brand-pink-dark) 100%);
   color: white;
   max-width: 70%;
   margin-left: auto;
 }
 
-.bot-message {
-  align-items: flex-start;
-}
+.bot-message { align-items: flex-start; }
 
 .bot-message .message-content {
   background: #ffffff;
   color: #333;
   border: 1px solid #e0e0e0;
-  border-left: 4px solid #55c360;
+  border-left: 4px solid var(--brand-green);
+  border-radius: 0 8px 8px 0;
   max-width: 70%;
 }
 
@@ -220,6 +216,7 @@
   background-color: #ffebee;
   color: #c62828;
   border-left: 4px solid #c62828;
+  border-radius: 0 8px 8px 0;
 }
 
 .message-content {
@@ -232,6 +229,7 @@
   margin: 0;
   line-height: 1.5;
   word-wrap: break-word;
+  overflow-wrap: break-word;
   font-family: "PT Sans", sans-serif;
   font-size: 14px;
 }
@@ -243,24 +241,25 @@
   padding: 0 12px;
 }
 
-.user-message .message-time {
-  text-align: right;
-}
+.user-message .message-time { text-align: right; }
 
+/* ===== Error banner ===== */
 .chat-error {
   background-color: #ffebee;
   color: #c62828;
-  padding: 12px 16px;
-  margin: 10px 20px 0 20px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  margin: 0 16px;
+  border-radius: 0;
   border-left: 4px solid #c62828;
   font-size: 13px;
   animation: slideIn 0.3s ease-out;
+  flex-shrink: 0;
 }
 
+/* ===== Input area ===== */
 .chat-input-container {
   background-color: #ffffff;
-  padding: 15px 20px;
+  padding: 12px 16px;
   border-top: 1px solid #e0e0e0;
   flex-shrink: 0;
 }
@@ -268,12 +267,13 @@
 #chatForm {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .input-group {
   display: flex;
   gap: 10px;
+  align-items: stretch;
 }
 
 #userInput {
@@ -283,40 +283,41 @@
   border-radius: 8px;
   font-family: "PT Sans", sans-serif;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   background-color: #f9f9f9;
+  min-width: 0; /* prevents flex overflow */
 }
 
 #userInput:focus {
   outline: none;
-  border-color: #e14177;
+  border-color: var(--brand-pink);
   background-color: #ffffff;
   box-shadow: 0 0 0 3px rgba(225, 65, 119, 0.1);
 }
 
-#userInput::placeholder {
-  color: #999;
-}
+#userInput::placeholder { color: #999; }
 
 .send-btn {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #e14177 0%, #d63b6a 100%);
+  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--brand-pink) 0%, var(--brand-pink-dark) 100%);
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   font-family: "PT Sans", sans-serif;
   font-size: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .send-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #55c360 0%, #4aad4f 100%);
+  background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
   box-shadow: 0 4px 12px rgba(85, 195, 96, 0.3);
 }
 
@@ -329,91 +330,114 @@
   transform: scale(0.98);
 }
 
+/* ===== Spinner ===== */
+/*
+  FIX 4: .spinner was referenced in HTML but never defined — spinner never showed.
+  Added the missing rule.
+*/
 .spinner-loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
+/* ===== Char count ===== */
 .char-count {
   font-size: 12px;
   color: #999;
   text-align: right;
 }
 
-/* Responsive Design */
+/* ===================================================
+   RESPONSIVE BREAKPOINTS
+   320px  — small phones (Galaxy S5, older iPhones)
+   480px  — large phones
+   768px  — tablets
+   1024px — desktop (default styles above)
+=================================================== */
+
+/* Tablet: 768px and below */
 @media (max-width: 768px) {
   .chatbot-container {
-    height: 80vh;
-    margin-left: 10px;
-    margin-right:10px;
-    margin-bottom: 10px;
-    margin-top: 100px;
+    margin-top: 80px;
+    width: calc(100% - 24px);
+    height: 85vh;
+    min-height: 480px;
+    border-radius: 10px;
   }
 
   .chatbot-header {
-    padding: 15px;
+    padding: 10px 14px;
   }
 
-  .chatbot-header h1 {
-    font-size: 22px;
+  #project-title {
+    font-size: 19px;
+  }
+
+  #symbol {
+    font-size: 24px;
   }
 
   .rate-limit-info {
-    top: 75px;
-    right: 15px;
     font-size: 10px;
     padding: 5px 10px;
     gap: 8px;
   }
 
-  .chat-messages {
-    max-height: 60vh;
-  }
-
-  .user-message .message-content {
-    max-width: 85%;
-  }
-
+  .user-message .message-content,
   .bot-message .message-content {
     max-width: 85%;
   }
 
-  .input-group {
-    flex-direction: column;
-  }
-
-  .send-btn {
-    width: 100%;
+  .chat-messages {
+    padding: 12px;
+    gap: 12px;
   }
 }
 
+/* Large phones: 480px and below */
 @media (max-width: 480px) {
-  .chatbot-header h1 {
-    font-size: 18px;
+  .chatbot-container {
+    margin-top: 72px;
+    width: calc(100% - 16px);
+    height: 88vh;
+    border-radius: 8px;
   }
 
-  .chatbot-subtitle {
-    font-size: 11px;
+  .chatbot-header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  #project-title {
+    font-size: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  #symbol {
+    font-size: 20px;
+  }
+
+  #normal-text {
+    display: none; /* hide " AI Assistant" text on small screens to save space */
   }
 
   .rate-limit-info {
-    top: 65px;
-    right: 10px;
-    font-size: 9px;
+    font-size: 10px;
     padding: 4px 8px;
     gap: 6px;
   }
@@ -424,16 +448,76 @@
     margin-right: 3px;
   }
 
-  .message-content p {
-    font-size: 13px;
+  .chat-messages {
+    padding: 10px;
+    gap: 10px;
   }
 
   .user-message .message-content,
   .bot-message .message-content {
-    max-width: 100%;
+    max-width: 92%;
   }
 
+  .message-content p {
+    font-size: 13px;
+  }
+
+  /* Stack input + button vertically on small phones */
+  .input-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .send-btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  /*
+    FIX 5: font-size: 16px on iOS prevents the browser auto-zoom when
+    focusing the input — keeps the layout stable.
+  */
   #userInput {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
+  }
+
+  .chat-input-container {
+    padding: 10px 12px;
+  }
+}
+
+/* Small phones: 320px and below */
+@media (max-width: 375px) {
+  .chatbot-container {
+    margin-top: 64px;
+    width: 100%;
+    border-radius: 0;
+    height: 90vh;
+    box-shadow: none;
+  }
+
+  #project-title {
+    font-size: 15px;
+  }
+
+  .message-content {
+    padding: 10px 12px;
+  }
+
+  .message-content p {
+    font-size: 13px;
+  }
+
+  .rate-limit-info {
+    font-size: 9px;
+    padding: 3px 7px;
+  }
+
+  .chat-messages {
+    padding: 8px;
+  }
+
+  .chat-input-container {
+    padding: 8px 10px;
   }
 }

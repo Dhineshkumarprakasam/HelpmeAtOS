@@ -5,14 +5,19 @@
 {% endblock %}
 
 {% block body %}
-<div class="chatbot-container">
-  <div class="chatbot-header">
-    <a class="navbar-brand" href="#"> <div id="project-title">HelpMe<span id="symbol">@</span>OS<span id="normal-text"> AI Assistant</span></div> </a>
-  </div>
+<div class="chatbot-header">
+  <a class="navbar-brand" href="#">
+    <div id="project-title">
+      HelpMe<span id="symbol">@</span>OS
+      <span id="normal-text"> AI Assistant</span>
+    </div>
+  </a>
+
   <div class="rate-limit-info">
     <span id="request-count">0/10</span>
     <span id="reset-timer">60s</span>
   </div>
+</div>
 
   <div class="chat-messages" id="chatMessages">
     <div class="message bot-message">
