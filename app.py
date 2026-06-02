@@ -30,6 +30,7 @@ if GEMINI_API_KEY:
 else:
     MODEL = None
     print("Warning: GEMINI_API_KEY not set in .env file")
+    print("Info: App running in development mode without Gemini API - chatbot will use sample responses")
 
 # Configure Chroma DB Cloud
 CHROMA_CLOUD_API_KEY = os.getenv('CHROMA_CLOUD_API_KEY')
@@ -39,22 +40,26 @@ CHROMA_COLLECTION_NAME = os.getenv('CHROMA_COLLECTION_NAME', 'os-knowledge-base'
 
 # Initialize Chroma DB Cloud client
 try:
-    chroma_client = chromadb.CloudClient(
-        api_key=CHROMA_CLOUD_API_KEY,
-        tenant=CHROMA_CLOUD_TENANT,
-        database=CHROMA_CLOUD_DATABASE
-    )
-    # Get or create collection
-    chroma_collection = chroma_client.get_or_create_collection(
-        name=CHROMA_COLLECTION_NAME,
-        metadata={"hnsw:space": "cosine"}
-    )
-    print(f"✓ Connected to Chroma DB Cloud")
-    print(f"  Tenant: {CHROMA_CLOUD_TENANT}")
-    print(f"  Database: {CHROMA_CLOUD_DATABASE}")
-    print(f"  Collection: {CHROMA_COLLECTION_NAME}")
+    if CHROMA_CLOUD_API_KEY and CHROMA_CLOUD_TENANT:
+        chroma_client = chromadb.CloudClient(
+            api_key=CHROMA_CLOUD_API_KEY,
+            tenant=CHROMA_CLOUD_TENANT,
+            database=CHROMA_CLOUD_DATABASE
+        )
+        # Get or create collection
+        chroma_collection = chroma_client.get_or_create_collection(
+            name=CHROMA_COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"}
+        )
+        print(f"✓ Connected to Chroma DB Cloud")
+        print(f"  Tenant: {CHROMA_CLOUD_TENANT}")
+        print(f"  Database: {CHROMA_CLOUD_DATABASE}")
+        print(f"  Collection: {CHROMA_COLLECTION_NAME}")
+    else:
+        raise Exception("Chroma DB credentials not configured")
 except Exception as e:
-    print(f"Warning: Could not connect to Chroma DB Cloud: {e}")
+    print(f"Info: Chroma DB Cloud not available: {e}")
+    print(f"Info: App running in development mode - knowledge base features disabled")
     chroma_client = None
     chroma_collection = None
 
@@ -112,11 +117,32 @@ def get_reset_time():
     return max(0, reset_time)
 
 
+def get_sample_response(user_message):
+    """Generate sample response for development mode (without API)"""
+    message_lower = user_message.lower()
+    
+    # Sample responses based on keywords
+    sample_responses = {
+        'cpu': "CPU Scheduling is the process of the OS deciding which process gets access to the CPU at any given time. Common algorithms include FCFS (First Come First Served), SJF (Shortest Job First), and Round Robin scheduling.",
+        'memory': "Memory Management is about allocating and deallocating memory to processes. It includes techniques like paging, segmentation, and virtual memory to efficiently manage RAM.",
+        'page': "Page Replacement is used when virtual memory is full and a new page needs to be loaded. Common algorithms include LRU (Least Recently Used), FIFO, and Optimal Page Replacement.",
+        'disk': "Disk Scheduling determines the order in which disk I/O requests are served. Algorithms include FCFS, SCAN, C-SCAN, and LOOK to minimize seek time and rotational delay.",
+        'scheduling': "Scheduling is a fundamental OS concept. CPU Scheduling manages process execution, while Disk Scheduling manages I/O operations. Both aim to maximize efficiency and minimize wait times.",
+    }
+    
+    # Find matching response or return generic message
+    for keyword, response in sample_responses.items():
+        if keyword in message_lower:
+            return response
+    
+    return "This is a development mode response. The AI API is not configured. Please connect the Gemini API key in .env to enable full chatbot functionality. Features like CPU Scheduling, Memory Management, Page Replacement, and Disk Scheduling visualizations are still available."
+
+
 def query_chroma_db(query_text):
     """Query Chroma DB Cloud for relevant OS concepts"""
     try:
         if not chroma_collection:
-            return "Chroma DB not connected. Please check your configuration."
+            return "[Development Mode: Knowledge base not available - using sample responses]"
         
         # Query the Chroma DB collection
         # The query will retrieve the most relevant documents using semantic search
@@ -141,15 +167,16 @@ def query_chroma_db(query_text):
         
     except Exception as e:
         print(f"Error querying Chroma DB: {e}")
-        return "Error querying knowledge base. Please try again."
+        return "[Development Mode: Could not query knowledge base - using sample responses]"
 
 
 def generate_response_with_gemini(user_message, context=""):
-    """Generate response using Gemini AI API"""
-    if not MODEL:
-        return "API configuration error: Gemini API key not found. Please configure it in .env file."
-    
+    """Generate response using Gemini AI API or sample responses in development mode"""
     try:
+        # If API is not available, use sample responses (development mode)
+        if not MODEL:
+            return get_sample_response(user_message)
+        
         # Get relevant context from knowledge base
         knowledge_context = query_chroma_db(user_message)
         
@@ -173,7 +200,8 @@ Please provide a helpful and educational response."""
         
     except Exception as e:
         print(f"Error with Gemini API: {e}")
-        return f"Error generating response: {str(e)}. Please check your API key configuration."
+        # Fallback to sample response on error
+        return get_sample_response(user_message)
 
 @app.route('/google72cdd43eb7699231.html')
 def google_verification():
